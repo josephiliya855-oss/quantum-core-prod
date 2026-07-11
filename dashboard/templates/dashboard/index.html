@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quantum//Core - Institutional Quant Station</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+        body {
+            background-color: #0B1020;
+            background-image: radial-gradient(circle at 50% 15%, #161f3d 0%, #0B1020 75%);
+        }
+        .glass-card {
+            background: rgba(20, 26, 47, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .neon-border-cyan { border-color: rgba(6, 182, 212, 0.15); }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0B1020; }
+        ::-webkit-scrollbar-thumb { background: #1F293D; border-radius: 2px; }
+    </style>
+</head>
+<body class="text-slate-300 font-sans text-[11px] min-h-screen p-3 tracking-wide antialiased">
+<div class="max-w-7xl mx-auto space-y-3">
+<!-- TOP NAVBAR / WORLD MARKET PANEL -->
+<header class="glass-card neon-border-cyan rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center space-x-3">
+<div class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+</div>
+<div>
+<h1 class="text-white font-black tracking-widest text-xs uppercase">QUANTUM//<span class="text-cyan-400">CORE</span></h1>
+<p class="text-[9px] text-slate-500 font-mono">SYS_CORE_V2.0_PROP</p>
+</div>
+</div>
+<!-- WORLD MARKET HUD CLOCKS -->
+<div class="flex flex-wrap items-center gap-1.5 font-mono text-[9px]">
+<div class="bg-[#0f1424] border border-slate-800 px-2 py-0.5 rounded flex items-center space-x-1">
+<span class="text-emerald-400">🇺🇸 NY</span>
+<span class="text-white font-bold">OPEN</span>
+</div>
+<div class="bg-[#0f1424] border border-slate-800 px-2 py-0.5 rounded flex items-center space-x-1">
+<span class="text-emerald-400">🇬🇧 LDN</span>
+<span class="text-white font-bold">OPEN</span>
+</div>
+<div class="bg-[#0f1424] border border-slate-800 px-2 py-0.5 rounded flex items-center space-x-1">
+<span class="text-slate-500">🇯🇵 TOK</span>
+<span class="text-slate-500 font-bold">CLOSED</span>
+</div>
+<div class="bg-[#0f1424] border border-slate-800 px-2 py-0.5 rounded flex items-center space-x-1">
+<span class="text-emerald-400">🇦🇺 SYD</span>
+<span class="text-white font-bold">OPEN</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 font-mono">
+<span class="{% if guard_status.status == 'HEALTHY' %}badge bg-success{% else %}badge bg-danger{% endif %}" id="syncStatus">{% if guard_status.status == 'HEALTHY' %}● SECURE ROUTER FEED{% else %}STREAM DISRUPTED{% endif %}</span>
+</div>
+</header>
+<!-- MAIN RESPONSIVE GRID WORKSPACE -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+<!-- LEFT AREA: HERO, CHARTS, LOGS -->
+<div class="lg:col-span-2 space-y-3">
+<!-- 1. HERO DASHBOARD -->
+<section class="glass-card rounded-xl p-4 relative overflow-hidden grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-2xl">
+<div class="sm:col-span-2 space-y-1">
+<span class="text-slate-400 font-bold tracking-widest text-[9px] uppercase block">PORTFOLIO VALUATION ASSETS</span>
+<div class="text-3xl font-black text-white tracking-tight font-mono" id="hudBalance">
+                            ${{ state.balance|floatformat:2 }}
+                        </div>
+<div class="text-[10px] font-mono font-bold text-emerald-400 flex items-center space-x-1">
+<span>▲ +$12,340 Today</span>
+<span class="text-slate-500 font-normal">(+1.34%)</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 border-t sm:border-t-0 sm:border-l border-slate-800/80 pt-2 sm:pt-0 sm:pl-4 font-mono text-[10px]">
+<div>
+<span class="text-slate-500 block text-[8px] uppercase font-bold">AI Node Status</span>
+<span class="text-emerald-400 font-bold flex items-center space-x-1">
+<span class="h-1.5 w-1.5 bg-emerald-400 rounded-full inline-block"></span>
+<span>ACTIVE</span>
+</span>
+</div>
+<div>
+<span class="text-slate-500 block text-[8px] uppercase font-bold">Confidence</span>
+<span class="text-cyan-400 font-bold">96%</span>
+</div>
+<div>
+<span class="text-slate-500 block text-[8px] uppercase font-bold">Risk Envelope</span>
+<span class="text-violet-400 font-bold">NOMINAL</span>
+</div>
+<div>
+<span class="text-slate-500 block text-[8px] uppercase font-bold">Market Mode</span>
+<span class="text-amber-400 font-bold">BULLISH</span>
+</div>
+</div>
+</section>
+<!-- 4. ANIMATED TECHNICAL CHART -->
+<section class="glass-card rounded-xl p-4 shadow-xl">
+<div class="flex items-center justify-between mb-3 border-b border-slate-800/60 pb-2">
+<span class="text-slate-200 font-bold uppercase tracking-wider text-[10px]">REAL-TIME SYSTEM TICK PLOT</span>
+<div class="flex space-x-2 font-mono text-[9px]">
+<span class="text-cyan-400">● Live Canvas</span>
+<span class="text-purple-400">● Baseline MA</span>
+</div>
+</div>
+<div class="w-full h-56">
+<canvas id="quantumPremiumChart"></canvas>
+</div>
+</section>
+<!-- 6. RECENT AI DECISIONS & LEDGER RECORDS -->
+<section class="glass-card rounded-xl overflow-hidden shadow-xl">
+<div class="bg-[#18203a]/40 border-b border-slate-800/80 px-4 py-2 flex flex-wrap items-center justify-between gap-1">
+<span class="text-slate-200 font-bold uppercase tracking-wider text-[10px]">TELEMETRY DECISIONS STREAM</span>
+<div class="flex space-x-2 text-[8px] font-mono text-slate-400">
+<span>09:15 BUY GOLD ✔</span>
+<span>10:35 HOLD ✔</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-mono text-[10px]">
+<thead class="bg-[#0b1020]/80 text-slate-500 uppercase tracking-wider text-[8px] border-b border-slate-800/60">
+<tr>
+<th class="px-4 py-1.5">TIMESTAMP</th>
+<th class="px-4 py-1.5 text-center">ACTION</th>
+<th class="px-4 py-1.5 text-right">DELTA INT</th>
+<th class="px-4 py-1.5 text-right">EQUITY BALANCE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-900/60" id="tableLogs">
+                                {% for trade in history %}
+                                <tr class="hover:bg-[#151c35]/40 transition">
+<td class="px-4 py-1.5 text-slate-400">{{ trade.timestamp_str }}</td>
+<td class="px-4 py-1.5 text-center">
+<span class="bg-cyan-950/40 text-cyan-400 border border-cyan-900/40 px-1 py-0.2 rounded text-[8px] font-bold">EXEC</span>
+</td>
+<td class="px-4 py-1.5 text-right font-bold {% if trade.delta >= 0 %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                                        {% if trade.delta >= 0 %}+{% endif %}${{ trade.delta|floatformat:2 }}
+                                    </td>
+<td class="px-4 py-1.5 text-right text-slate-200">${{ trade.resulting_balance|floatformat:2 }}</td>
+</tr>
+                                {% endfor %}
+                            </tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- RIGHT AREA: AI ASSISTANT, ASSET CARDS, RISK METRICS -->
+<div class="space-y-3">
+<!-- 2. AI ASSISTANT PANEL -->
+<section class="glass-card rounded-xl p-4 bg-gradient-to-b from-[#171f3a] to-[#11172c] border-l-2 border-l-cyan-500">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center space-x-2">
+<span class="text-sm">🤖</span>
+<span class="text-white font-bold tracking-wider uppercase text-[10px]">Quantum AI Intel</span>
+</div>
+<span class="bg-cyan-500/10 text-cyan-400 px-1.5 py-0.2 rounded font-mono font-bold text-[8px]">94% CONF</span>
+</div>
+<div class="bg-[#0b1020]/60 border border-slate-800/80 rounded-lg p-2 space-y-1.5 font-mono text-[10px]">
+<div class="flex justify-between items-center">
+<span class="text-slate-500">SIGNAL:</span>
+<span class="text-emerald-400 font-bold bg-emerald-950/40 px-1.5 py-0.2 rounded border border-emerald-900/40">BUY XAUUSD</span>
+</div>
+<div class="text-[9px] text-slate-400 space-y-0.5">
+<div>• Liquidity sweep array validation complete.</div>
+<div>• Bullish mitigation order block verified.</div>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:opacity-90 text-slate-950 font-black py-2 rounded-lg uppercase tracking-wider text-[10px] transition shadow-lg mt-2.5 active:scale-[0.99]" id="btnAction" onclick="injectTrade()">
+                        Inject Position Override
+                    </button>
+</section>
+<!-- 3. LIVE TRADING ASSET CARDS -->
+<section class="grid grid-cols-2 gap-2">
+<div class="glass-card rounded-xl p-2 font-mono">
+<div class="flex justify-between items-center text-[9px]">
+<span class="text-white font-bold">GOLD</span>
+<span class="text-emerald-400 font-bold">▲ 94%</span>
+</div>
+<div class="text-xs font-bold text-slate-200 my-0.5">$2,342.10</div>
+<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded uppercase">BUY</span>
+</div>
+<div class="glass-card rounded-xl p-2 font-mono">
+<div class="flex justify-between items-center text-[9px]">
+<span class="text-white font-bold">BTC</span>
+<span class="text-cyan-400 font-bold">● 89%</span>
+</div>
+<div class="text-xs font-bold text-slate-200 my-0.5">$94,120.50</div>
+<span class="text-[8px] bg-slate-900 text-slate-400 px-1 rounded uppercase">HOLD</span>
+</div>
+<div class="glass-card rounded-xl p-2 font-mono">
+<div class="flex justify-between items-center text-[9px]">
+<span class="text-white font-bold">EURUSD</span>
+<span class="text-rose-400 font-bold">▼ 76%</span>
+</div>
+<div class="text-xs font-bold text-slate-200 my-0.5">$1.0842</div>
+<span class="text-[8px] bg-rose-950 text-rose-400 px-1 rounded uppercase">SELL</span>
+</div>
+<div class="glass-card rounded-xl p-2 font-mono">
+<div class="flex justify-between items-center text-[9px]">
+<span class="text-white font-bold">NASDAQ</span>
+<span class="text-emerald-400 font-bold">▲ 91%</span>
+</div>
+<div class="text-xs font-bold text-slate-200 my-0.5">$19,840.10</div>
+<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded uppercase">BUY</span>
+</div>
+</section>
+<!-- 5. RISK MANAGEMENT SECTION -->
+<section class="glass-card rounded-xl p-3 space-y-2.5 shadow-xl">
+<span class="text-slate-400 font-bold tracking-widest text-[9px] uppercase block border-b border-slate-800 pb-1">
+                        RISK OVERLAYS
+                    </span>
+<div class="grid grid-cols-2 gap-2 font-mono text-[9px]">
+<div class="bg-[#0b1020]/70 p-1.5 rounded border border-slate-900">
+<span class="text-slate-500 block text-[8px] font-bold">DAILY RISK</span>
+<span class="text-orange-400 font-bold block mt-0.5">■■□□□□□ 20%</span>
+</div>
+<div class="bg-[#0b1020]/70 p-1.5 rounded border border-slate-900">
+<span class="text-slate-500 block text-[8px] font-bold">DRAWDOWN</span>
+<span class="text-cyan-400 font-bold block mt-0.5">2.1%</span>
+</div>
+<div class="bg-[#0b1020]/70 p-1.5 rounded border border-slate-900">
+<span class="text-slate-500 block text-[8px] font-bold">OPEN TRADES</span>
+<span class="text-white font-bold block mt-0.5" id="hudRisk">3 ACTIVE</span>
+</div>
+<div class="bg-[#0b1020]/70 p-1.5 rounded border border-slate-900">
+<span class="text-slate-500 block text-[8px] font-bold">WIN RATE</span>
+<span class="text-emerald-400 font-bold block mt-0.5">89%</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-[9px] font-mono bg-[#0b1020]/40 p-1.5 rounded border border-slate-900 text-slate-400">
+<span>PROFIT FACTOR: <span class="text-white font-bold">3.6</span></span>
+<span>CUSHION: <span class="text-violet-400 font-bold" id="hudCushion">{{ state.cushion_pct }}</span></span>
+</div>
+</section>
+<!-- 10. PREMIUM FEATURE CHIPS -->
+<section class="glass-card rounded-xl p-2.5 shadow-xl">
+<div class="grid grid-cols-3 gap-1 text-center font-mono text-[8px]">
+<span class="bg-[#19213d] text-slate-300 py-1 rounded border border-slate-800">Journal</span>
+<span class="bg-[#19213d] text-slate-300 py-1 rounded border border-slate-800">Calendar</span>
+<span class="bg-[#19213d] text-slate-300 py-1 rounded border border-slate-800">Voice AI</span>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- MAIN CONTROL SCRIPT IMPLEMENTATION -->
+<script>
+        const ctx = document.getElementById('quantumPremiumChart').getContext('2d');
+        let chartLabels = {{ chart_labels|safe|default:"[]" }};
+        let chartData = {{ chart_data|safe|default:"[]" }};
+
+        const neonCyanGlow = ctx.createLinearGradient(0, 0, 0, 220);
+        neonCyanGlow.addColorStop(0, 'rgba(6, 182, 212, 0.15)');
+        neonCyanGlow.addColorStop(1, 'rgba(6, 182, 212, 0.00)');
+
+        const appChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        data: chartData,
+                        borderColor: '#06b6d4',
+                        backgroundColor: neonCyanGlow,
+                        borderWidth: 1.8,
+                        pointBackgroundColor: '#06b6d4',
+                        pointBorderColor: '#0B1020',
+                        pointBorderWidth: 1,
+                        pointRadius: 2.5,
+                        fill: true,
+                        tension: 0.15
+                    },
+                    {
+                        data: chartData.map(v => v * 0.999),
+                        borderColor: 'rgba(147, 51, 234, 0.35)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false,
+                        borderDash: [3, 3],
+                        tension: 0.2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255, 255, 255, 0.01)' }, ticks: { color: '#475569', font: { size: 8, family: 'monospace' } } },
+                    y: { grid: { color: 'rgba(255, 255, 255, 0.015)' }, ticks: { color: '#475569', font: { size: 8, family: 'monospace' } } }
+                }
+            }
+        });
+
+        async function runTelemetryStreamLoop() {
+            try {
+                const response = await fetch('/?format=json');
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                
+                document.getElementById('hudBalance').innerText = '$' + data.balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                document.getElementById('hudCushion').innerText = data.cushion.toFixed(2);
+                
+                const riskBadge = document.getElementById('hudRisk');
+                if (data.margin_call === "TRUE") {
+                    riskBadge.innerText = "MARGIN CALL WARNING";
+                    riskBadge.className = "text-rose-500 font-bold animate-pulse";
+                } else {
+                    riskBadge.innerText = "3 ACTIVE";
+                    riskBadge.className = "text-white font-bold block mt-0.5";
+                }
+
+                appChart.data.labels = data.chart_labels;
+                appChart.data.datasets[0].data = data.chart_data;
+                appChart.data.datasets[1].data = data.chart_data.map(v => v * 0.999);
+                appChart.update('none');
+                
+                let htmlBuffer = '';
+                data.table_rows.forEach(row => {
+                    const cl = row.delta >= 0 ? 'text-emerald-400' : 'text-rose-400';
+                    const prefix = row.delta >= 0 ? '+' : '';
+                    htmlBuffer += `
+                        <tr class="hover:bg-[#151c35]/40 transition">
+                            <td class="px-4 py-1.5 text-slate-400">${row.timestamp_str}</td>
+                            <td class="px-4 py-1.5 text-center"><span class="bg-cyan-950/40 text-cyan-400 border border-cyan-900/40 px-1 py-0.2 rounded text-[8px] font-bold">EXEC</span></td>
+                            <td class="px-4 py-1.5 text-right font-bold ${cl}">${prefix}$${row.delta.toFixed(2)}</td>
+                            <td class="px-4 py-1.5 text-right text-slate-200">$${row.resulting_balance.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('tableLogs').innerHTML = htmlBuffer;
+                
+                document.getElementById('syncStatus').innerText = "STREAMING: ACTIVE";
+                document.getElementById('syncStatus').className = "text-[9px] text-cyan-400 bg-cyan-950/40 border border-cyan-900/60 px-2 py-0.5 rounded font-bold";
+            } catch (err) {
+                document.getElementById('syncStatus').innerText = "{% if guard_status.status == 'HEALTHY' %}● SECURE ROUTER FEED{% else %}STREAM DISRUPTED{% endif %}";
+                document.getElementById('syncStatus').className = "text-[9px] text-rose-400 bg-rose-950/40 border border-rose-900/60 px-2 py-0.5 rounded font-bold";
+            }
+        }
+
+        async function injectTrade() {
+            const btn = document.getElementById('btnAction');
+            btn.disabled = true;
+            btn.innerText = "ROUTING CONTRACT OVERRIDE...";
+            try {
+                const res = await fetch('/?action=trade');
+                const resData = await res.json();
+                if(resData.status === 'rejected') alert(resData.reason);
+                await runTelemetryStreamLoop();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Inject Position Override";
+            }
+        }
+
+        setInterval(runTelemetryStreamLoop, 2000);
+    </script>
+</body>
+</html>
