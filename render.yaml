@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: quantum-core-prod
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python create_admin.py
+    startCommand: gunicorn trading_platform.wsgi:application
+
