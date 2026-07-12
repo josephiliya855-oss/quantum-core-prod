@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard',
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ]
 
 MIDDLEWARE = [
