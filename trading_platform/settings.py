@@ -42,6 +42,14 @@ import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ]
 STORAGES = {
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "static": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # <-- Changed here
+    },
+}
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
