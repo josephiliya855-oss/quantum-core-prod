@@ -1,3 +1,1 @@
-Markdown
-# Quantum Core
-Testing GitHub Actions workflow.
+.github/workflows/django.yml
