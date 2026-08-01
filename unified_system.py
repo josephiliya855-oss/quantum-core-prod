@@ -97,7 +97,7 @@ def user_interface_menu():
                     conn = sqlite3.connect('trading_system.db', timeout=15.0)
                     cursor = conn.cursor()
                     cursor.execute("UPDATE account_state SET balance = balance + ?, peak_balance = max(peak_balance, balance + ?) WHERE id = 1;", (val, val))
-                    cursor.execute("INSERT INTO transactions (timestamp, type, amount, balance) VALUES (datetime('now','localtime'), 'DEPOSIT', ?, (SELECT balance FROM account_state WHERE id=1));", (val,))
+                    cursor.execute("INSERT INTO transactions (timestamp, type, amount, balance) VALUES (datetime('now','localtime'), 'DEPOSIT', ?, (SELECT balance FROM account_state WHERE id=1));[...]")
                     conn.commit()
                     conn.close()
                 print(f"[SUCCESS] Deposited ${val:,.2f}")
@@ -114,7 +114,7 @@ def user_interface_menu():
                         conn = sqlite3.connect('trading_system.db', timeout=15.0)
                         cursor = conn.cursor()
                         cursor.execute("UPDATE account_state SET balance = balance - ? WHERE id = 1;", (surplus,))
-                        cursor.execute("INSERT INTO transactions (timestamp, type, amount, balance) VALUES (datetime('now','localtime'), 'WITHDRAW_SUCCESS', ?, (SELECT balance FROM account_state WHERE id=1));", (-surplus,))
+                        cursor.execute("INSERT INTO transactions (timestamp, type, amount, balance) VALUES (datetime('now','localtime'), 'WITHDRAW_SUCCESS', ?, (SELECT balance FROM account_state [...])")
                         conn.commit()
                         conn.close()
                     print(f"[SUCCESS] Safely withdrew optimized amount: ${surplus:,.2f}")
@@ -145,6 +145,6 @@ if __name__ == "__main__":
     # Optimize storage settings before spawning parallel workloads
     init_db_concurrency()
     
-    bot_thread = threading.Thread(target=background_trading_loop, daemon=True)
-    bot_thread.start()
+    # bot_thread = threading.Thread(target=background_trading_loop, daemon=True)
+    # bot_thread.start()
     user_interface_menu()
