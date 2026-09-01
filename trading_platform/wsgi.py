@@ -14,12 +14,8 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trading_platform.settings')
 
 application = get_wsgi_application()
-# Force admin creation on server startup
-from django.contrib.auth.models import User
-try:
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@example.com', 'Pass12345')
-        print("Admin user created successfully on startup!")
-except Exception as e:
-    print(f"Error creating admin: {e}")
 
+# NOTE: Creating admin users at import time is unsafe for production and can
+# cause side effects during management commands. If you need an automated
+# admin creation step, run `python create_admin.py` or implement a
+# dedicated management command that is executed explicitly.
