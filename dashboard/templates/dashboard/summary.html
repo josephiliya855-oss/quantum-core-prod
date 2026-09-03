@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quantum//Core - Project Summary</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body {
+        background-color: #0B1020;
+        background-image: radial-gradient(circle at 50% 15%, #161f3d 0%, #0B1020 75%);
+    }
+    .glass-card {
+        background: rgba(20, 26, 47, 0.65);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+    .stat-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; font-weight: 700; }
+    .stat-value { font-family: ui-monospace, monospace; font-weight: 800; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #0B1020; }
+    ::-webkit-scrollbar-thumb { background: #1F293D; border-radius: 2px; }
+</style>
+</head>
+<body class="text-slate-300 font-sans text-[11px] min-h-screen p-3 tracking-wide antialiased">
+<div class="max-w-5xl mx-auto space-y-3">
+
+<!-- HEADER -->
+<header class="glass-card rounded-xl px-4 py-2.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+        <div class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+        </div>
+        <div>
+            <h1 class="text-white font-black tracking-widest text-xs uppercase">QUANTUM//<span class="text-cyan-400">CORE</span></h1>
+            <p class="text-[9px] text-slate-500 font-mono">PROJECT DATA SUMMARY</p>
+        </div>
+    </div>
+    <a href="/" class="text-[9px] font-mono text-cyan-400 border border-cyan-900/60 bg-cyan-950/40 px-2.5 py-1 rounded hover:bg-cyan-900/40 transition">← LIVE STATION</a>
+</header>
+
+<!-- ACCOUNT -->
+<section class="glass-card rounded-xl p-4">
+    <span class="stat-label block mb-3 border-b border-slate-800/60 pb-2">ACCOUNT STATE</span>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+            <span class="stat-label block">Balance</span>
+            <span class="stat-value text-white text-lg">${{ state.balance|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Equity</span>
+            <span class="stat-value text-white text-lg">${{ state.equity|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Initial Capital</span>
+            <span class="stat-value text-slate-400 text-lg">${{ state.initial_capital|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Risk Lock</span>
+            <span class="stat-value text-lg {% if state.is_locked %}text-rose-400{% else %}text-emerald-400{% endif %}">
+                {% if state.is_locked %}● LOCKED{% else %}● ACTIVE{% endif %}
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- PERFORMANCE -->
+<section class="glass-card rounded-xl p-4">
+    <span class="stat-label block mb-3 border-b border-slate-800/60 pb-2">PERFORMANCE METRICS</span>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div>
+            <span class="stat-label block">Net P&L</span>
+            <span class="stat-value text-lg {% if total_pnl >= 0 %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                {% if total_pnl >= 0 %}+{% endif %}${{ total_pnl|floatformat:2 }}
+            </span>
+            <span class="text-[9px] font-mono {% if pnl_pct >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %}">
+                ({% if pnl_pct >= 0 %}+{% endif %}{{ pnl_pct|floatformat:2 }}%)
+            </span>
+        </div>
+        <div>
+            <span class="stat-label block">Win Rate</span>
+            <span class="stat-value text-lg {% if win_rate >= 50 %}text-emerald-400{% else %}text-rose-400{% endif %}">{{ win_rate|floatformat:1 }}%</span>
+            <span class="text-[9px] font-mono text-slate-500">{{ winning_count }}W / {{ losing_count }}L</span>
+        </div>
+        <div>
+            <span class="stat-label block">Total Trades</span>
+            <span class="stat-value text-lg text-white">{{ total_trades }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Profit Factor</span>
+            <span class="stat-value text-lg {% if profit_factor >= 1.2 %}text-emerald-400{% else %}text-rose-400{% endif %}">{{ profit_factor|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Max Drawdown</span>
+            <span class="stat-value text-lg {% if max_dd_pct > 15 %}text-rose-400{% else %}text-amber-400{% endif %}">{{ max_dd_pct|floatformat:2 }}%</span>
+        </div>
+        <div>
+            <span class="stat-label block">Market Regime</span>
+            <span class="stat-value text-sm text-cyan-400">{{ market_regime }}</span>
+        </div>
+    </div>
+</section>
+
+<!-- MARKET DATA -->
+<section class="glass-card rounded-xl p-4">
+    <span class="stat-label block mb-3 border-b border-slate-800/60 pb-2">MARKET DATA (XAU/USD)</span>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+            <span class="stat-label block">Latest Price</span>
+            <span class="stat-value text-lg text-white">${{ latest_price|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Period High</span>
+            <span class="stat-value text-lg text-emerald-400">${{ price_high|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Period Low</span>
+            <span class="stat-value text-lg text-rose-400">${{ price_low|floatformat:2 }}</span>
+        </div>
+        <div>
+            <span class="stat-label block">Candles Stored</span>
+            <span class="stat-value text-lg text-white">{{ candle_count }}</span>
+        </div>
+    </div>
+</section>
+
+<!-- RECENT LEDGER -->
+<section class="glass-card rounded-xl overflow-hidden">
+    <div class="bg-[#18203a]/40 border-b border-slate-800/80 px-4 py-2">
+        <span class="stat-label">RECENT LEDGER ENTRIES</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-[10px]">
+            <thead class="bg-[#0b1020]/80 text-slate-500 uppercase tracking-wider text-[8px] border-b border-slate-800/60">
+            <tr>
+                <th class="px-4 py-1.5">#</th>
+                <th class="px-4 py-1.5">TIMESTAMP</th>
+                <th class="px-4 py-1.5 text-right">DELTA</th>
+                <th class="px-4 py-1.5 text-right">BALANCE</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900/60">
+            {% for entry in recent_ledger %}
+                <tr class="hover:bg-[#151c35]/40 transition">
+                    <td class="px-4 py-1.5 text-slate-500">{{ entry.id }}</td>
+                    <td class="px-4 py-1.5 text-slate-400">{{ entry.timestamp|date:"m-d H:i:s" }}</td>
+                    <td class="px-4 py-1.5 text-right font-bold {% if entry.delta >= 0 %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                        {% if entry.delta >= 0 %}+{% endif %}${{ entry.delta|floatformat:2 }}
+                    </td>
+                    <td class="px-4 py-1.5 text-right text-slate-200">${{ entry.resulting_balance|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="px-4 py-3 text-center text-slate-600">No ledger entries yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</div>
+</body>
+</html>

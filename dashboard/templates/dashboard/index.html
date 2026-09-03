@@ -58,6 +58,7 @@
 </div>
 </div>
 <div class="flex items-center space-x-2 font-mono">
+<a href="/summary/" class="text-[9px] text-cyan-400 border border-cyan-900/60 bg-cyan-950/40 px-2.5 py-1 rounded hover:bg-cyan-900/40 transition">SUMMARY</a>
 <span class="{% if guard_status.status == 'HEALTHY' %}badge bg-success{% else %}badge bg-danger{% endif %}" id="syncStatus">{% if guard_status.status == 'HEALTHY' %}● SECURE ROUTER FEED{% else %}STREAM DISRUPTED{% endif %}</span>
 </div>
 </header>
