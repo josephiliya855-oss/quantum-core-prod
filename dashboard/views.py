@@ -41,6 +41,11 @@ def index(request):
         data_payload = {
             "balance": float(state.balance),
             "equity": float(state.equity),
+            # Kept in sync with the dashboard telemetry loop, which reads
+            # `cushion` and `margin_call`; omitting either aborted the
+            # client-side refresh of the HUD, chart and ledger table.
+            "cushion": float(state.equity / state.balance * 100) if state.balance else 0.0,
+            "margin_call": 'TRUE' if state.is_locked else 'FALSE',
             "market_regime": market_regime,
             "win_rate": f"{win_rate:.1f}%",
             "total_trades": total_trades,
@@ -49,7 +54,7 @@ def index(request):
             "guard_status": {"status": "HEALTHY"},
             "table_rows": [
                 {
-                    "timestamp_str": item.id,
+                    "timestamp_str": item.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
                     "delta": float(item.delta),
                     "resulting_balance": float(item.resulting_balance)
                 } for item in ledger_items

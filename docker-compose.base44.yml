@@ -1,0 +1,46 @@
+# Base44 sandbox/dev environment for the Quantum//Core Django app.
+#
+# Runs the Django development server from the bind-mounted working tree (live
+# reload on every source edit) and serves the dashboard on host port 3000, which
+# is what the Base44 preview iframe points at.
+#
+# Start:  docker compose -f docker-compose.base44.yml up -d --build
+# Logs:   docker compose -f docker-compose.base44.yml logs -f web
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: .base44/Dockerfile
+    working_dir: /app
+    # Migrations are idempotent; run them before serving so the schema always
+    # matches dashboard/models.py, then hand over to the auto-reloading server.
+    command:
+      - sh
+      - -ec
+      - |
+        python manage.py migrate --noinput
+        exec python manage.py runserver 0.0.0.0:3000
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      # Django DEBUG=True also sets ALLOWED_HOSTS=["*"], which is what lets the
+      # preview proxy reach the server under its sandbox hostname.
+      - DJANGO_DEBUG=True
+      # Consumed by the platform only; preserved for any preview-mode gating.
+      - BASE44_PREVIEW_MODE
+    restart: on-failure
+    healthcheck:
+      # Real request against the dashboard view (it also touches the DB), so a
+      # broken app or schema fails the check instead of just a listening socket.
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request,sys;
+          sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:3000/', timeout=5).status == 200 else 1)"
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
